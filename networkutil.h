@@ -13,13 +13,18 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDir>
+#include <QMap>
 
+#include "musicInfo.h"
+#include "plugininterface/search-plugin-iface.h"
+
+namespace Zeeker{
 class NetworkUtil : public QObject
 {
     Q_OBJECT
 public:
-    explicit NetworkUtil(QObject *parent = nullptr);
-    void get(QString name);
+    explicit NetworkUtil(QVector<MusicInfo>& infos, QObject *parent = nullptr);
+    void get(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult);
 
 Q_SIGNALS:
     void downloadFinish();
@@ -33,6 +38,11 @@ private:
     QNetworkAccessManager m_manager;
     QFile* m_file;
     QString m_name;
+    int m_searchLimit;
+    QVector<MusicInfo> m_infos;
+    QMap<QUrl, int> m_imgUrlToIdx; // Q: better implementation?
+    DataQueue<SearchPluginIface::ResultInfo>* m_searchResult = nullptr; // Q: should not be filled by networkUtil? connect to musicPlugin instead?
 };
+}
 
 #endif // NETWORKUTIL_H

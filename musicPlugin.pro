@@ -1,4 +1,3 @@
-QT -= gui
 QT += core xml widgets dbus concurrent network
 
 TEMPLATE = lib
@@ -22,6 +21,7 @@ SOURCES += \
     networkutil.cpp
 
 HEADERS += \
+    musicInfo.h \
     musicPlugin_global.h \
     musicplugin.h \
     networkutil.h

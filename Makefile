@@ -14,10 +14,10 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DMUSICPLUGIN_LIBRARY -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_XML_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_DBUS_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
+DEFINES       = -DMUSICPLUGIN_LIBRARY -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_XML_LIB -DQT_DBUS_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtXml -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtConcurrent -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
+INCPATH       = -I. -I../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtXml -isystem /usr/include/x86_64-linux-gnu/qt5/QtDBus -isystem /usr/include/x86_64-linux-gnu/qt5/QtConcurrent -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -40,7 +40,7 @@ DISTNAME      = musicPlugin1.0.0
 DISTDIR = /home/leafeon/musicPlugin/.tmp/musicPlugin1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1 -shared -Wl,-soname,libmusicPlugin.so.1
-LIBS          = $(SUBLIBS) -L/home/leafeon/musicPlugin/../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/ -lukui-search /usr/lib/x86_64-linux-gnu/libQt5Xml.so /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5DBus.so /usr/lib/x86_64-linux-gnu/libQt5Concurrent.so /usr/lib/x86_64-linux-gnu/libQt5Network.so /usr/lib/x86_64-linux-gnu/libQt5Core.so /usr/lib/x86_64-linux-gnu/libGL.so -lpthread   
+LIBS          = $(SUBLIBS) -L/home/leafeon/musicPlugin/../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/ -lukui-search /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Xml.so /usr/lib/x86_64-linux-gnu/libQt5DBus.so /usr/lib/x86_64-linux-gnu/libQt5Concurrent.so /usr/lib/x86_64-linux-gnu/libQt5Network.so /usr/lib/x86_64-linux-gnu/libQt5Core.so /usr/lib/x86_64-linux-gnu/libGL.so -lpthread   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -53,9 +53,11 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = musicplugin.cpp \
-		networkutil.cpp moc_networkutil.cpp
+		networkutil.cpp moc_musicplugin.cpp \
+		moc_networkutil.cpp
 OBJECTS       = musicplugin.o \
 		networkutil.o \
+		moc_musicplugin.o \
 		moc_networkutil.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -138,7 +140,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		musicPlugin.pro musicPlugin_global.h \
+		musicPlugin.pro musicInfo.h \
+		musicPlugin_global.h \
 		musicplugin.h \
 		networkutil.h musicplugin.cpp \
 		networkutil.cpp
@@ -350,7 +353,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents musicPlugin_global.h musicplugin.h networkutil.h $(DISTDIR)/
+	$(COPY_FILE) --parents musicInfo.h musicPlugin_global.h musicplugin.h networkutil.h $(DISTDIR)/
 	$(COPY_FILE) --parents musicplugin.cpp networkutil.cpp $(DISTDIR)/
 
 
@@ -384,13 +387,31 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_networkutil.cpp
+compiler_moc_header_make_all: moc_musicplugin.cpp moc_networkutil.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_networkutil.cpp
-moc_networkutil.cpp: networkutil.h \
+	-$(DEL_FILE) moc_musicplugin.cpp moc_networkutil.cpp
+moc_musicplugin.cpp: musicplugin.h \
+		musicPlugin_global.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/search-plugin-iface.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/plugin-iface.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/data-queue.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/libsearch_global.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/action-label.h \
+		networkutil.h \
+		musicInfo.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/leafeon/musicPlugin/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/leafeon/musicPlugin -I/home/leafeon/Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include networkutil.h -o moc_networkutil.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/leafeon/musicPlugin/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/leafeon/musicPlugin -I/home/leafeon/Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include musicplugin.h -o moc_musicplugin.cpp
+
+moc_networkutil.cpp: networkutil.h \
+		musicInfo.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/search-plugin-iface.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/plugin-iface.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/data-queue.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/libsearch_global.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/leafeon/musicPlugin/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/leafeon/musicPlugin -I/home/leafeon/Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include networkutil.h -o moc_networkutil.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -414,11 +435,21 @@ musicplugin.o: musicplugin.cpp musicplugin.h \
 		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/plugin-iface.h \
 		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/data-queue.h \
 		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/libsearch_global.h \
-		networkutil.h
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/action-label.h \
+		networkutil.h \
+		musicInfo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o musicplugin.o musicplugin.cpp
 
-networkutil.o: networkutil.cpp networkutil.h
+networkutil.o: networkutil.cpp networkutil.h \
+		musicInfo.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/search-plugin-iface.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/plugin-iface.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/plugininterface/data-queue.h \
+		../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/libsearch_global.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o networkutil.o networkutil.cpp
+
+moc_musicplugin.o: moc_musicplugin.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_musicplugin.o moc_musicplugin.cpp
 
 moc_networkutil.o: moc_networkutil.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_networkutil.o moc_networkutil.cpp

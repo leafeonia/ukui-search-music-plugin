@@ -20,31 +20,31 @@
 QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
-struct qt_meta_stringdata_NetworkUtil_t {
+struct qt_meta_stringdata_Zeeker__NetworkUtil_t {
     QByteArrayData data[6];
-    char stringdata0[63];
+    char stringdata0[71];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_NetworkUtil_t, stringdata0) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_Zeeker__NetworkUtil_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
-static const qt_meta_stringdata_NetworkUtil_t qt_meta_stringdata_NetworkUtil = {
+static const qt_meta_stringdata_Zeeker__NetworkUtil_t qt_meta_stringdata_Zeeker__NetworkUtil = {
     {
-QT_MOC_LITERAL(0, 0, 11), // "NetworkUtil"
-QT_MOC_LITERAL(1, 12, 14), // "downloadFinish"
-QT_MOC_LITERAL(2, 27, 0), // ""
-QT_MOC_LITERAL(3, 28, 10), // "listFinish"
-QT_MOC_LITERAL(4, 39, 11), // "musicFinish"
-QT_MOC_LITERAL(5, 51, 11) // "imageFinish"
+QT_MOC_LITERAL(0, 0, 19), // "Zeeker::NetworkUtil"
+QT_MOC_LITERAL(1, 20, 14), // "downloadFinish"
+QT_MOC_LITERAL(2, 35, 0), // ""
+QT_MOC_LITERAL(3, 36, 10), // "listFinish"
+QT_MOC_LITERAL(4, 47, 11), // "musicFinish"
+QT_MOC_LITERAL(5, 59, 11) // "imageFinish"
 
     },
-    "NetworkUtil\0downloadFinish\0\0listFinish\0"
-    "musicFinish\0imageFinish"
+    "Zeeker::NetworkUtil\0downloadFinish\0\0"
+    "listFinish\0musicFinish\0imageFinish"
 };
 #undef QT_MOC_LITERAL
 
-static const uint qt_meta_data_NetworkUtil[] = {
+static const uint qt_meta_data_Zeeker__NetworkUtil[] = {
 
  // content:
        8,       // revision
@@ -76,7 +76,7 @@ static const uint qt_meta_data_NetworkUtil[] = {
        0        // eod
 };
 
-void NetworkUtil::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void Zeeker::NetworkUtil::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         auto *_t = static_cast<NetworkUtil *>(_o);
@@ -101,30 +101,30 @@ void NetworkUtil::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
     Q_UNUSED(_a);
 }
 
-QT_INIT_METAOBJECT const QMetaObject NetworkUtil::staticMetaObject = { {
+QT_INIT_METAOBJECT const QMetaObject Zeeker::NetworkUtil::staticMetaObject = { {
     &QObject::staticMetaObject,
-    qt_meta_stringdata_NetworkUtil.data,
-    qt_meta_data_NetworkUtil,
+    qt_meta_stringdata_Zeeker__NetworkUtil.data,
+    qt_meta_data_Zeeker__NetworkUtil,
     qt_static_metacall,
     nullptr,
     nullptr
 } };
 
 
-const QMetaObject *NetworkUtil::metaObject() const
+const QMetaObject *Zeeker::NetworkUtil::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *NetworkUtil::qt_metacast(const char *_clname)
+void *Zeeker::NetworkUtil::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_NetworkUtil.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_Zeeker__NetworkUtil.stringdata0))
         return static_cast<void*>(this);
     return QObject::qt_metacast(_clname);
 }
 
-int NetworkUtil::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int Zeeker::NetworkUtil::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QObject::qt_metacall(_c, _id, _a);
     if (_id < 0)
@@ -142,7 +142,7 @@ int NetworkUtil::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void NetworkUtil::downloadFinish()
+void Zeeker::NetworkUtil::downloadFinish()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
 }
