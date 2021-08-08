@@ -16,7 +16,7 @@ QString MusicPlugin::getPluginName() {
 
 void MusicPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult) {
 
-    m_networkUtil->get(keyword, 4, searchResult);
+    m_networkUtil->getList(keyword, 4, searchResult);
 
 }
 
@@ -41,9 +41,9 @@ QWidget *MusicPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
     }
     m_pluginLabel->setText(tr("Music"));
 
-    m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
-    m_pathLabel2->setToolTip(m_currentActionKey);
-    m_timeLabel2->setText(ri.description.at(1).value);
+    m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(ri.description.at(0).value, Qt::ElideRight, m_pathLabel2->width()));
+    //m_pathLabel2->setToolTip(m_currentActionKey);
+    m_timeLabel2->setText(m_timeLabel2->fontMetrics().elidedText(ri.description.at(1).value, Qt::ElideRight, m_timeLabel2->width()));
     return m_detailPage;
 }
 
@@ -91,7 +91,7 @@ void MusicPlugin::initDetailPage()
     m_timeLabel1 = new QLabel(m_timeFrame);
     m_timeLabel2 = new QLabel(m_timeFrame);
     m_timeLabel2->setAlignment(Qt::AlignRight);
-    m_timeLabel1->setText(tr("Album name"));
+    m_timeLabel1->setText(tr("Album"));
     m_timeFrameLyt->addWidget(m_timeLabel1);
     m_timeFrameLyt->addStretch();
     m_timeFrameLyt->addWidget(m_timeLabel2);
@@ -119,5 +119,9 @@ void MusicPlugin::initDetailPage()
     m_detailLyt->addWidget(m_actionFrame);
     m_detailPage->setLayout(m_detailLyt);
     m_detailLyt->addStretch();
+
+    connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
+        m_networkUtil->downloadMusic(m_currentActionKey.toInt());
+    });
 }
 

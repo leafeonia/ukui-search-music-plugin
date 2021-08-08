@@ -24,7 +24,8 @@ class NetworkUtil : public QObject
     Q_OBJECT
 public:
     explicit NetworkUtil(QVector<MusicInfo>& infos, QObject *parent = nullptr);
-    void get(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult);
+    void getList(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult);
+    void downloadMusic(int idx);
 
 Q_SIGNALS:
     void downloadFinish();

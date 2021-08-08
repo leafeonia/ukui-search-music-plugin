@@ -7,7 +7,7 @@ NetworkUtil::NetworkUtil(QVector<MusicInfo>& infos, QObject *parent) : QObject(p
     m_infos = infos;
 }
 
-void NetworkUtil::get(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult)
+void NetworkUtil::getList(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult)
 {
     m_name = name;
     m_searchLimit = searchLimit;
@@ -17,6 +17,18 @@ void NetworkUtil::get(QString name, int searchLimit, DataQueue<SearchPluginIface
     QNetworkReply* listReply = m_manager.get(QNetworkRequest(QUrl(listUrl)));
     connect(listReply, &QNetworkReply::finished, this, &NetworkUtil::listFinish);
 
+}
+
+void NetworkUtil::downloadMusic(int idx)
+{
+    if (idx >= m_infos.size()) {
+        qWarning() << "music index out of boundary";
+        return;
+    }
+    QNetworkRequest request(QUrl("http://music.163.com/song/media/outer/url?id=" + QString::number(m_infos[idx].id) + ".mp3"));
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    QNetworkReply* musicReply = m_manager.get(request);
+    connect(musicReply, &QNetworkReply::finished, this, &NetworkUtil::musicFinish);
 }
 
 void NetworkUtil::listFinish()
@@ -43,7 +55,7 @@ void NetworkUtil::listFinish()
         for (int j = 0; j < size - 1; j++) {
             info.artists += artistArray[j].toObject()["name"].toString() + "/";
         }
-        if (size > 0) info.artists += artistArray[size - 1];
+        if (size > 0) info.artists += artistArray[size - 1].toObject()["name"].toString();
 
         info.album = songObject["album"].toObject()["name"].toString();
 
@@ -54,11 +66,6 @@ void NetworkUtil::listFinish()
         QNetworkReply* imgReply = m_manager.get(QNetworkRequest(imgUrl));
         connect(imgReply, &QNetworkReply::finished, this, &NetworkUtil::imageFinish);
 
-
-//        QNetworkRequest request(QUrl("http://music.163.com/song/media/outer/url?id=" + QString::number(id) + ".mp3"));
-//        request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-//        QNetworkReply* musicReply = m_manager.get(request);
-//        connect(musicReply, &QNetworkReply::finished, this, &NetworkUtil::musicFinish);
     }
 
 
@@ -89,9 +96,9 @@ void NetworkUtil::imageFinish()
     m_infos[idx].image->close();
 
     SearchPluginIface::ResultInfo ri;
-    ri.actionKey = m_infos[idx].artists;
-    ri.description.append(SearchPluginIface::DescriptionInfo{"key","value"});
-    ri.description.append(SearchPluginIface::DescriptionInfo{"key2",m_infos[idx].album});
+    ri.actionKey = QString::number(idx);
+    ri.description.append(SearchPluginIface::DescriptionInfo{"artists",m_infos[idx].artists});
+    ri.description.append(SearchPluginIface::DescriptionInfo{"album",m_infos[idx].album});
     ri.icon = QIcon::fromTheme("folder");
     ri.name = m_infos[idx].name;
     ri.type = 0;

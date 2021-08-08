@@ -7,7 +7,7 @@ public:
 
     int id; // netease music id
     QString name;
-    QVector<QString> artists;
+    QString artists;
     QString album;
     QFile* image = nullptr;
 
