@@ -28,7 +28,10 @@ void NetworkUtil::downloadMusic(int idx)
     QNetworkRequest request(QUrl("http://music.163.com/song/media/outer/url?id=" + QString::number(m_infos[idx].id) + ".mp3"));
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     QNetworkReply* musicReply = m_manager.get(request);
-    connect(musicReply, &QNetworkReply::finished, this, &NetworkUtil::musicFinish);
+    QString name = m_infos[idx].name;
+    connect(musicReply, &QNetworkReply::finished, this, [musicReply, name, this]() {
+        musicFinish(musicReply, name);
+    });
 }
 
 void NetworkUtil::listFinish()
@@ -73,15 +76,15 @@ void NetworkUtil::listFinish()
 
 }
 
-void NetworkUtil::musicFinish()
+void NetworkUtil::musicFinish(QNetworkReply* reply, QString name)
 {
-    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
+    if (!reply) return;
     QByteArray b = reply->readAll();
-    qInfo() << b.size();
-    QFile file(QDir::homePath() + "/Music/" + m_name + ".mp3");
+    QFile file(QDir::homePath() + "/Music/" + name + ".mp3");
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
     out << b;
+    file.close();
     reply->deleteLater();
 }
 

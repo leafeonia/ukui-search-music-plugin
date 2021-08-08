@@ -26,13 +26,13 @@ public:
     explicit NetworkUtil(QVector<MusicInfo>& infos, QObject *parent = nullptr);
     void getList(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult);
     void downloadMusic(int idx);
+    void musicFinish(QNetworkReply* reply, QString name); // use lambda as slot instead of Q_SLOT
 
 Q_SIGNALS:
     void downloadFinish();
 
 private Q_SLOTS:
     void listFinish();
-    void musicFinish();
     void imageFinish();
 
 private:
