@@ -5,6 +5,9 @@ using namespace Zeeker;
 MusicPlugin::MusicPlugin(QObject *parent) : QObject(parent)
 {
     m_networkUtil = new NetworkUtil(m_infos);
+    connect(m_networkUtil, &NetworkUtil::musicDownloadSuccess, this, &MusicPlugin::musicDownloadSuccess);
+    connect(m_networkUtil, &NetworkUtil::musicDownloadFail, this, &MusicPlugin::musicDownloadFail);
+
     initDetailPage();
 
     // create cache directory if not exists
@@ -50,6 +53,16 @@ QWidget *MusicPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
     //m_artistsLabel2->setToolTip(m_currentActionKey);
     m_albumLabel2->setText(m_albumLabel2->fontMetrics().elidedText(ri.description.at(1).value, Qt::ElideRight, m_albumLabel2->width()));
     return m_detailPage;
+}
+
+void MusicPlugin::musicDownloadFail()
+{
+    m_statusLabel->setText("download failed");
+}
+
+void MusicPlugin::musicDownloadSuccess()
+{
+    m_statusLabel->setText("download success");
 }
 
 void MusicPlugin::initDetailPage()
@@ -115,6 +128,9 @@ void MusicPlugin::initDetailPage()
     m_actionFrameLyt->addWidget(m_actionLabel1);
     m_actionFrame->setLayout(m_actionFrameLyt);
 
+    m_statusLabel = new QLabel(m_detailPage);
+    m_statusLabel->setText("test");
+
     m_detailLyt->addSpacing(50);
     m_detailLyt->addWidget(m_iconLabel);
     m_detailLyt->addWidget(m_nameFrame);
@@ -123,6 +139,7 @@ void MusicPlugin::initDetailPage()
     m_detailLyt->addWidget(m_albumFrame);
     m_detailLyt->addWidget(m_line_2);
     m_detailLyt->addWidget(m_actionFrame);
+    m_detailLyt->addWidget(m_statusLabel);
     m_detailPage->setLayout(m_detailLyt);
     m_detailLyt->addStretch();
 

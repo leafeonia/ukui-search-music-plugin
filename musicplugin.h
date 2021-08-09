@@ -14,7 +14,7 @@
 #include "musicPlugin_global.h"
 #include "plugininterface/search-plugin-iface.h"
 #include "plugininterface/action-label.h"
-//#include "file-utils.h"
+//#include "file-utils.h" //TODO
 #include "networkutil.h"
 #include "musicInfo.h"
 
@@ -36,6 +36,11 @@ public:
     QList<Actioninfo> getActioninfo(int type);
     void openAction(int actionkey, QString key, int type);
     QWidget *detailPage(const ResultInfo &ri);
+
+public Q_SLOTS:
+    void musicDownloadSuccess();
+    void musicDownloadFail();
+
 
 private:
     void initDetailPage();
@@ -63,6 +68,8 @@ private:
     ActionLabel *m_actionLabel1 = nullptr;
     ActionLabel *m_actionLabel2 = nullptr;
     ActionLabel *m_actionLabel3 = nullptr;
+
+    QLabel* m_statusLabel = nullptr;
 
     QVBoxLayout * m_actionLyt = nullptr;
 

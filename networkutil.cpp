@@ -78,14 +78,21 @@ void NetworkUtil::listFinish()
 
 void NetworkUtil::musicFinish(QNetworkReply* reply, QString name)
 {
-    if (!reply) return;
+    QString contentType = reply->header(QNetworkRequest::ContentTypeHeader).toString();
+    if (contentType.length() < 5 || contentType.left(5) != "audio") {
+        emit musicDownloadFail();
+        reply->deleteLater();
+        return;
+    }
     QByteArray b = reply->readAll();
     QFile file(QDir::homePath() + "/Music/" + name + ".mp3");
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
     out << b;
     file.close();
+    emit musicDownloadSuccess();
     reply->deleteLater();
+    //QMessageBox::information(parent(), "Success", "Music successfully downloaded to " + QDir::homePath() +"/Music");
 }
 
 void NetworkUtil::imageFinish()
@@ -107,7 +114,7 @@ void NetworkUtil::imageFinish()
     ri.description.append(SearchPluginIface::DescriptionInfo{"artists", m_infos[idx].artists});
     ri.description.append(SearchPluginIface::DescriptionInfo{"album", m_infos[idx].album});
     ri.description.append(SearchPluginIface::DescriptionInfo{"imgPath", imgPath});
-    ri.icon = QIcon::fromTheme("folder");
+    ri.icon = QIcon::fromTheme("folder"); //TODO
     ri.name = m_infos[idx].name;
     ri.type = 0;
     m_searchResult->enqueue(ri);

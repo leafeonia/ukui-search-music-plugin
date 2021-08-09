@@ -14,6 +14,7 @@
 #include <QJsonArray>
 #include <QDir>
 #include <QMap>
+#include <QMessageBox>
 
 #include "musicInfo.h"
 #include "plugininterface/search-plugin-iface.h"
@@ -29,7 +30,8 @@ public:
     void musicFinish(QNetworkReply* reply, QString name); // use lambda as slot instead of Q_SLOT
 
 Q_SIGNALS:
-    void downloadFinish();
+    void musicDownloadSuccess();
+    void musicDownloadFail();
 
 private Q_SLOTS:
     void listFinish();
