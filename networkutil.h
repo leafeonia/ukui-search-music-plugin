@@ -41,7 +41,7 @@ private:
     QString m_name;
     int m_searchLimit;
     QVector<MusicInfo> m_infos;
-    QMap<QUrl, int> m_imgUrlToIdx; // Q: better implementation?
+    QMap<QUrl, int> m_imgUrlToIdx;
     DataQueue<SearchPluginIface::ResultInfo>* m_searchResult = nullptr; // Q: should not be filled by networkUtil? connect to musicPlugin instead?
 };
 }

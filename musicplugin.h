@@ -48,14 +48,14 @@ private:
     QLabel *m_nameLabel = nullptr;
     QLabel *m_pluginLabel = nullptr;
     QFrame *m_line_1 = nullptr;
-    QFrame *m_pathFrame = nullptr;
-    QLabel *m_pathLabel1 = nullptr;
-    QLabel *m_pathLabel2 = nullptr;
-    QHBoxLayout *m_pathFrameLyt = nullptr;
-    QFrame *m_timeFrame = nullptr;
-    QLabel *m_timeLabel1 = nullptr;
-    QLabel *m_timeLabel2 = nullptr;
-    QHBoxLayout *m_timeFrameLyt = nullptr;
+    QFrame *m_artistsFrame = nullptr;
+    QLabel *m_artistsLabel1 = nullptr;
+    QLabel *m_artistsLabel2 = nullptr;
+    QHBoxLayout *m_artistsFrameLyt = nullptr;
+    QFrame *m_albumFrame = nullptr;
+    QLabel *m_albumLabel1 = nullptr;
+    QLabel *m_albumLabel2 = nullptr;
+    QHBoxLayout *m_albumFrameLyt = nullptr;
 
     QFrame *m_line_2 = nullptr;
     QFrame *m_actionFrame = nullptr;

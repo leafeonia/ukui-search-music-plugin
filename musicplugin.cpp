@@ -5,9 +5,14 @@ using namespace Zeeker;
 MusicPlugin::MusicPlugin(QObject *parent) : QObject(parent)
 {
     m_networkUtil = new NetworkUtil(m_infos);
-    SearchPluginIface::Actioninfo test { 0, tr("Test")};
-    m_actionInfo << test;
     initDetailPage();
+
+    // create cache directory if not exists
+    QString cachePath = QDir::homePath() + "/.cache/ukui-search-musicPlugin/";
+    if (!QDir(cachePath).exists())
+    {
+        QDir().mkpath(cachePath);
+    }
 }
 
 QString MusicPlugin::getPluginName() {
@@ -31,7 +36,7 @@ void MusicPlugin::openAction(int actionkey, QString key, int type) {
 QWidget *MusicPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
 {
     m_currentActionKey = ri.actionKey;
-    m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
+    m_iconLabel->setPixmap(QPixmap(ri.description.at(2).value).scaled(180, 180));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
     //m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));  // Q: glib
@@ -41,9 +46,9 @@ QWidget *MusicPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
     }
     m_pluginLabel->setText(tr("Music"));
 
-    m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(ri.description.at(0).value, Qt::ElideRight, m_pathLabel2->width()));
-    //m_pathLabel2->setToolTip(m_currentActionKey);
-    m_timeLabel2->setText(m_timeLabel2->fontMetrics().elidedText(ri.description.at(1).value, Qt::ElideRight, m_timeLabel2->width()));
+    m_artistsLabel2->setText(m_artistsLabel2->fontMetrics().elidedText(ri.description.at(0).value, Qt::ElideRight, m_artistsLabel2->width()));
+    //m_artistsLabel2->setToolTip(m_currentActionKey);
+    m_albumLabel2->setText(m_albumLabel2->fontMetrics().elidedText(ri.description.at(1).value, Qt::ElideRight, m_albumLabel2->width()));
     return m_detailPage;
 }
 
@@ -56,7 +61,7 @@ void MusicPlugin::initDetailPage()
     m_detailLyt->setContentsMargins(8, 0, 16, 0);
     m_iconLabel = new QLabel(m_detailPage);
     m_iconLabel->setAlignment(Qt::AlignCenter);
-    m_iconLabel->setFixedHeight(128);
+    m_iconLabel->setFixedHeight(200);
 
     m_nameFrame = new QFrame(m_detailPage);
     m_nameFrameLyt = new QHBoxLayout(m_nameFrame);
@@ -75,26 +80,27 @@ void MusicPlugin::initDetailPage()
     m_line_1->setFixedHeight(1);
     m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
 
-    m_pathFrame = new QFrame(m_detailPage);
-    m_pathFrameLyt = new QHBoxLayout(m_pathFrame);
-    m_pathLabel1 = new QLabel(m_pathFrame);
-    m_pathLabel2 = new QLabel(m_pathFrame);
-    m_pathLabel1->setText(tr("Artist"));
-    m_pathLabel2->setFixedWidth(240);
-    m_pathLabel2->setAlignment(Qt::AlignRight);
-    m_pathFrameLyt->addWidget(m_pathLabel1);
-    m_pathFrameLyt->addStretch();
-    m_pathFrameLyt->addWidget(m_pathLabel2);
+    m_artistsFrame = new QFrame(m_detailPage);
+    m_artistsFrameLyt = new QHBoxLayout(m_artistsFrame);
+    m_artistsLabel1 = new QLabel(m_artistsFrame);
+    m_artistsLabel2 = new QLabel(m_artistsFrame);
+    m_artistsLabel1->setText(tr("Artist"));
+    m_artistsLabel2->setFixedWidth(240);
+    m_artistsLabel2->setAlignment(Qt::AlignRight);
+    m_artistsFrameLyt->addWidget(m_artistsLabel1);
+    m_artistsFrameLyt->addStretch();
+    m_artistsFrameLyt->addWidget(m_artistsLabel2);
 
-    m_timeFrame = new QFrame(m_detailPage);
-    m_timeFrameLyt = new QHBoxLayout(m_timeFrame);
-    m_timeLabel1 = new QLabel(m_timeFrame);
-    m_timeLabel2 = new QLabel(m_timeFrame);
-    m_timeLabel2->setAlignment(Qt::AlignRight);
-    m_timeLabel1->setText(tr("Album"));
-    m_timeFrameLyt->addWidget(m_timeLabel1);
-    m_timeFrameLyt->addStretch();
-    m_timeFrameLyt->addWidget(m_timeLabel2);
+    m_albumFrame = new QFrame(m_detailPage);
+    m_albumFrameLyt = new QHBoxLayout(m_albumFrame);
+    m_albumLabel1 = new QLabel(m_albumFrame);
+    m_albumLabel2 = new QLabel(m_albumFrame);
+    m_albumLabel2->setAlignment(Qt::AlignRight);
+    m_albumLabel1->setText(tr("Album"));
+    m_albumLabel2->setFixedWidth(240);
+    m_albumFrameLyt->addWidget(m_albumLabel1);
+    m_albumFrameLyt->addStretch();
+    m_albumFrameLyt->addWidget(m_albumLabel2);
 
     m_line_2 = new QFrame(m_detailPage);
     m_line_2->setLineWidth(0);
@@ -113,8 +119,8 @@ void MusicPlugin::initDetailPage()
     m_detailLyt->addWidget(m_iconLabel);
     m_detailLyt->addWidget(m_nameFrame);
     m_detailLyt->addWidget(m_line_1);
-    m_detailLyt->addWidget(m_pathFrame);
-    m_detailLyt->addWidget(m_timeFrame);
+    m_detailLyt->addWidget(m_artistsFrame);
+    m_detailLyt->addWidget(m_albumFrame);
     m_detailLyt->addWidget(m_line_2);
     m_detailLyt->addWidget(m_actionFrame);
     m_detailPage->setLayout(m_detailLyt);
@@ -124,4 +130,6 @@ void MusicPlugin::initDetailPage()
         m_networkUtil->downloadMusic(m_currentActionKey.toInt());
     });
 }
+
+// Q: copyRight?
 

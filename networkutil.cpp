@@ -62,7 +62,7 @@ void NetworkUtil::listFinish()
 
         info.album = songObject["album"].toObject()["name"].toString();
 
-        m_infos.push_back(info); // Q: multiple times?
+        m_infos.push_back(info);
 
         QUrl imgUrl = QUrl(songObject["album"].toObject()["picUrl"].toString());
         m_imgUrlToIdx[imgUrl] = i;
@@ -92,16 +92,21 @@ void NetworkUtil::imageFinish()
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     QByteArray b = reply->readAll();
+
     int idx = m_imgUrlToIdx[reply->url()];
-    m_infos[idx].image = new QFile();
-    m_infos[idx].image->open(QIODevice::WriteOnly);
-    m_infos[idx].image->write(b);
-    m_infos[idx].image->close();
+
+    QString suffix = reply->url().toString().right(4);
+    QString imgPath = QDir::homePath() + "/.cache/ukui-search-musicPlugin/" + QString::number(m_infos[idx].id) + suffix;
+    QFile file(imgPath);
+    file.open(QIODevice::WriteOnly);
+    file.write(b);
+    file.close();
 
     SearchPluginIface::ResultInfo ri;
     ri.actionKey = QString::number(idx);
-    ri.description.append(SearchPluginIface::DescriptionInfo{"artists",m_infos[idx].artists});
-    ri.description.append(SearchPluginIface::DescriptionInfo{"album",m_infos[idx].album});
+    ri.description.append(SearchPluginIface::DescriptionInfo{"artists", m_infos[idx].artists});
+    ri.description.append(SearchPluginIface::DescriptionInfo{"album", m_infos[idx].album});
+    ri.description.append(SearchPluginIface::DescriptionInfo{"imgPath", imgPath});
     ri.icon = QIcon::fromTheme("folder");
     ri.name = m_infos[idx].name;
     ri.type = 0;

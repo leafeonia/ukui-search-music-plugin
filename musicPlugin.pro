@@ -36,3 +36,10 @@ unix:!macx: LIBS += -L$$PWD/../Desktop/uk2/build-ukui-search-Desktop-Debug/libse
 
 INCLUDEPATH += $$PWD/../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch
 DEPENDPATH += $$PWD/../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch
+
+
+#TODO -libsearch
+
+# Q_DECLARE_INTERFACE(Zeeker::SearchPluginIface, SearchPluginIface_iid) //TODO
+
+# TODO: json peony-extension
