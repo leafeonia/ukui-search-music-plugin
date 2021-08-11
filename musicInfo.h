@@ -9,9 +9,6 @@ public:
     QString name;
     QString artists;
     QString album;
-    QFile* image = nullptr;
-
-    //TODO: delete
 };
 }
 #endif // MUSICINFO_H

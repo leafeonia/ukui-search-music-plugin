@@ -18,24 +18,27 @@
 
 #include "musicInfo.h"
 #include "plugininterface/search-plugin-iface.h"
+#include "musicplugin.h"
 
 namespace Zeeker{
+
 class NetworkUtil : public QObject
 {
     Q_OBJECT
 public:
     explicit NetworkUtil(QVector<MusicInfo>& infos, QObject *parent = nullptr);
-    void getList(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult);
+    void getList(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult, size_t uniqueSymbol);
     void downloadMusic(int idx);
     void musicFinish(QNetworkReply* reply, QString name); // use lambda as slot instead of Q_SLOT
+    void listFinish(size_t uniqueSymbol);
+    void imageFinish(size_t uniqueSymbol);
 
 Q_SIGNALS:
     void musicDownloadSuccess();
     void musicDownloadFail();
 
 private Q_SLOTS:
-    void listFinish();
-    void imageFinish();
+
 
 private:
     QNetworkAccessManager m_manager;
@@ -45,6 +48,8 @@ private:
     QVector<MusicInfo> m_infos;
     QMap<QUrl, int> m_imgUrlToIdx;
     DataQueue<SearchPluginIface::ResultInfo>* m_searchResult = nullptr; // Q: should not be filled by networkUtil? connect to musicPlugin instead?
+    static QMutex m_mutex;
+    static size_t m_uniqueSymbol;
 };
 }
 

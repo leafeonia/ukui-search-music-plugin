@@ -19,8 +19,12 @@
 #include "musicInfo.h"
 
 namespace Zeeker{
+
+class NetworkUtil;
+
 class MUSICPLUGIN_EXPORT MusicPlugin : public QObject, public SearchPluginIface
 {
+    friend class NetworkUtil;
     Q_OBJECT
 public:
     MusicPlugin(QObject *parent = nullptr);
@@ -69,9 +73,15 @@ private:
     ActionLabel *m_actionLabel2 = nullptr;
     ActionLabel *m_actionLabel3 = nullptr;
 
-    QLabel* m_statusLabel = nullptr;
+    QFrame *m_statusFrame = nullptr;
+    QHBoxLayout *m_statusFrameLyt = nullptr;
+    QLabel *m_statusLabel = nullptr;
 
     QVBoxLayout * m_actionLyt = nullptr;
+
+
+    static size_t uniqueSymbol;
+    static QMutex m_mutex;
 
     bool m_enable = true;
     QList<SearchPluginIface::Actioninfo> m_actionInfo;

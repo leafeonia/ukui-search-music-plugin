@@ -2,20 +2,31 @@
 
 using namespace Zeeker;
 
+QMutex NetworkUtil::m_mutex;
+
 NetworkUtil::NetworkUtil(QVector<MusicInfo>& infos, QObject *parent) : QObject(parent)
 {
     m_infos = infos;
 }
 
-void NetworkUtil::getList(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult)
+void NetworkUtil::getList(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult, size_t uniqueSymbol)
 {
+    MusicPlugin::m_mutex.lock();
+    if (uniqueSymbol != MusicPlugin::uniqueSymbol) {
+        MusicPlugin::m_mutex.unlock();
+        return;
+    } else {
+        MusicPlugin::m_mutex.unlock();
+    }
+
     m_name = name;
     m_searchLimit = searchLimit;
     m_searchResult = searchResult;
-    qInfo() << "Getting from server..";
     QString listUrl = "http://music.163.com/api/search/pc?hlpretag=&hlposttag=&s=" + name + "&type=1&offset=0&total=true&limit=" + QString::number(m_searchLimit);
     QNetworkReply* listReply = m_manager.get(QNetworkRequest(QUrl(listUrl)));
-    connect(listReply, &QNetworkReply::finished, this, &NetworkUtil::listFinish);
+    connect(listReply, &QNetworkReply::finished, this, [=](){
+        listFinish(uniqueSymbol);
+    });
 
 }
 
@@ -34,11 +45,8 @@ void NetworkUtil::downloadMusic(int idx)
     });
 }
 
-void NetworkUtil::listFinish()
+void NetworkUtil::listFinish(size_t uniqueSymbol)
 {
-    for (MusicInfo info: m_infos) { // Q: too many new delete operations
-        if (info.image) delete info.image;
-    }
     m_infos.clear();
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     auto val = reply->readAll();
@@ -62,12 +70,23 @@ void NetworkUtil::listFinish()
 
         info.album = songObject["album"].toObject()["name"].toString();
 
-        m_infos.push_back(info);
+        MusicPlugin::m_mutex.lock();
+        if (uniqueSymbol != MusicPlugin::uniqueSymbol) {
+            MusicPlugin::m_mutex.unlock();
+            reply->deleteLater();
+            return;
+        } else {
+            m_infos.push_back(info);
+            MusicPlugin::m_mutex.unlock();
+        }
+
 
         QUrl imgUrl = QUrl(songObject["album"].toObject()["picUrl"].toString());
         m_imgUrlToIdx[imgUrl] = i;
         QNetworkReply* imgReply = m_manager.get(QNetworkRequest(imgUrl));
-        connect(imgReply, &QNetworkReply::finished, this, &NetworkUtil::imageFinish);
+        connect(imgReply, &QNetworkReply::finished, this, [=](){
+            imageFinish(uniqueSymbol);
+        });
 
     }
 
@@ -95,9 +114,20 @@ void NetworkUtil::musicFinish(QNetworkReply* reply, QString name)
     //QMessageBox::information(parent(), "Success", "Music successfully downloaded to " + QDir::homePath() +"/Music");
 }
 
-void NetworkUtil::imageFinish()
+void NetworkUtil::imageFinish(size_t uniqueSymbol)
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
+
+    MusicPlugin::m_mutex.lock();
+    if (uniqueSymbol != MusicPlugin::uniqueSymbol) {
+        MusicPlugin::m_mutex.unlock();
+        reply->deleteLater();
+        return;
+    } else {
+        MusicPlugin::m_mutex.unlock();
+    }
+
+
     QByteArray b = reply->readAll();
 
     int idx = m_imgUrlToIdx[reply->url()];
@@ -114,7 +144,7 @@ void NetworkUtil::imageFinish()
     ri.description.append(SearchPluginIface::DescriptionInfo{"artists", m_infos[idx].artists});
     ri.description.append(SearchPluginIface::DescriptionInfo{"album", m_infos[idx].album});
     ri.description.append(SearchPluginIface::DescriptionInfo{"imgPath", imgPath});
-    ri.icon = QIcon::fromTheme("folder"); //TODO
+    ri.icon = QIcon::fromTheme("folder"); //TODO   blank search    clear cache     no network     blank image
     ri.name = m_infos[idx].name;
     ri.type = 0;
     m_searchResult->enqueue(ri);

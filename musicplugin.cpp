@@ -2,6 +2,9 @@
 
 using namespace Zeeker;
 
+size_t MusicPlugin::uniqueSymbol = 0;
+QMutex MusicPlugin::m_mutex;
+
 MusicPlugin::MusicPlugin(QObject *parent) : QObject(parent)
 {
     m_networkUtil = new NetworkUtil(m_infos);
@@ -24,7 +27,13 @@ QString MusicPlugin::getPluginName() {
 
 void MusicPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult) {
 
-    m_networkUtil->getList(keyword, 4, searchResult);
+    if (keyword.trimmed().isEmpty()) return;
+
+    MusicPlugin::m_mutex.lock();
+    ++MusicPlugin::uniqueSymbol;
+    MusicPlugin::m_mutex.unlock();
+
+    m_networkUtil->getList(keyword, 4, searchResult, MusicPlugin::uniqueSymbol);
 
 }
 
@@ -52,17 +61,18 @@ QWidget *MusicPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
     m_artistsLabel2->setText(m_artistsLabel2->fontMetrics().elidedText(ri.description.at(0).value, Qt::ElideRight, m_artistsLabel2->width()));
     //m_artistsLabel2->setToolTip(m_currentActionKey);
     m_albumLabel2->setText(m_albumLabel2->fontMetrics().elidedText(ri.description.at(1).value, Qt::ElideRight, m_albumLabel2->width()));
+    m_statusLabel->setText("");
     return m_detailPage;
 }
 
 void MusicPlugin::musicDownloadFail()
 {
-    m_statusLabel->setText("download failed");
+    m_statusLabel->setText("Download failed. The music may be protected by copyright.");
 }
 
 void MusicPlugin::musicDownloadSuccess()
 {
-    m_statusLabel->setText("download success");
+    m_statusLabel->setText("Music successfully downloaded to " + QDir::homePath() + "/Music/");
 }
 
 void MusicPlugin::initDetailPage()
@@ -128,8 +138,12 @@ void MusicPlugin::initDetailPage()
     m_actionFrameLyt->addWidget(m_actionLabel1);
     m_actionFrame->setLayout(m_actionFrameLyt);
 
+    //m_statusFrame = new QFrame(m_detailPage);
+    //m_statusFrameLyt = new QHBoxLayout(m_statusFrame);
     m_statusLabel = new QLabel(m_detailPage);
-    m_statusLabel->setText("test");
+    m_statusLabel->setWordWrap(true);
+    m_statusLabel->setContentsMargins(8, 0, 8, 0);
+    //m_statusFrameLyt->addWidget(m_statusLabel);
 
     m_detailLyt->addSpacing(50);
     m_detailLyt->addWidget(m_iconLabel);
@@ -144,6 +158,7 @@ void MusicPlugin::initDetailPage()
     m_detailLyt->addStretch();
 
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
+        m_statusLabel->setText("Downloading...");
         m_networkUtil->downloadMusic(m_currentActionKey.toInt());
     });
 }
