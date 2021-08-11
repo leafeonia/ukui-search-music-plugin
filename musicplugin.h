@@ -28,8 +28,10 @@ class MUSICPLUGIN_EXPORT MusicPlugin : public QObject, public SearchPluginIface
     Q_OBJECT
 public:
     MusicPlugin(QObject *parent = nullptr);
+    ~MusicPlugin();
+
     PluginType pluginType() {return PluginType::SearchPlugin;}
-    const QString name() {return tr("Music Search");}
+    const QString name() {return tr("Online Music Search");}
     const QString description() {return tr("Music search.");}
     const QIcon icon() {return QIcon::fromTheme("folder");}
     void setEnable(bool enable) {m_enable = enable;}

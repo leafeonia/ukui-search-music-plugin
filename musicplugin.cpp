@@ -13,12 +13,25 @@ MusicPlugin::MusicPlugin(QObject *parent) : QObject(parent)
 
     initDetailPage();
 
-    // create cache directory if not exists
+
     QString cachePath = QDir::homePath() + "/.cache/ukui-search-musicPlugin/";
-    if (!QDir(cachePath).exists())
+    QDir dir(cachePath);
+    if (!dir.exists()) // create cache directory if not exists
     {
         QDir().mkpath(cachePath);
+    } else { // clear previous cache contents if directory exist
+        dir.setNameFilters(QStringList() << "*.*");
+        dir.setFilter(QDir::Files);
+        foreach(QString dirFile, dir.entryList())
+        {
+            dir.remove(dirFile);
+        }
     }
+}
+
+MusicPlugin::~MusicPlugin()
+{
+    m_networkUtil->deleteLater();
 }
 
 QString MusicPlugin::getPluginName() {

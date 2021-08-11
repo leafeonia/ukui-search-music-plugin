@@ -31,14 +31,11 @@ public:
     void downloadMusic(int idx);
     void musicFinish(QNetworkReply* reply, QString name); // use lambda as slot instead of Q_SLOT
     void listFinish(size_t uniqueSymbol);
-    void imageFinish(size_t uniqueSymbol);
+    void imageFinish(size_t uniqueSymbol, int idx);
 
 Q_SIGNALS:
     void musicDownloadSuccess();
     void musicDownloadFail();
-
-private Q_SLOTS:
-
 
 private:
     QNetworkAccessManager m_manager;
@@ -46,10 +43,8 @@ private:
     QString m_name;
     int m_searchLimit;
     QVector<MusicInfo> m_infos;
-    QMap<QUrl, int> m_imgUrlToIdx;
+    //QMap<QUrl, int> m_imgUrlToIdx;
     DataQueue<SearchPluginIface::ResultInfo>* m_searchResult = nullptr; // Q: should not be filled by networkUtil? connect to musicPlugin instead?
-    static QMutex m_mutex;
-    static size_t m_uniqueSymbol;
 };
 }
 

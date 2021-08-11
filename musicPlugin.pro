@@ -43,3 +43,6 @@ DEPENDPATH += $$PWD/../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch
 # Q_DECLARE_INTERFACE(Zeeker::SearchPluginIface, SearchPluginIface_iid) //TODO
 
 # TODO: json peony-extension
+
+RESOURCES += \
+    resources.qrc
