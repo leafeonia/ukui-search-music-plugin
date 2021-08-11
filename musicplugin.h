@@ -1,5 +1,23 @@
+/*
+ * 1. The data source of this plugin is to from the public server of Netease
+ * Cloud Music platform. this plugin is not responsible for the accuracy of
+ * the data.
+ *
+ * 2. Copyright data may be generated during the use of this plugin. For the
+ * data with copyright, the plugin does not own the ownership. In order to
+ * avoid infringement, users must clear the data with copyright generated
+ * during the use of this plugin within 24 hours.
+ *
+ * 3. Any direct, indirect, special, accidental or consequential damage of
+ * any nature arising from the use of this plugin, including but not limited
+ * to due to loss of goodwill, work stoppage, Compensation for computer
+ * failure or damage caused by the failure, or any and all other commercial
+ * damage or loss) is the responsibility of the user.
+ */
+
 #ifndef MUSICPLUGIN_H
 #define MUSICPLUGIN_H
+#define MusicPlugin_iid "org.ukui.ukui-search." //Q
 
 #include <QObject>
 #include <QThreadPool>
@@ -14,7 +32,6 @@
 #include "musicPlugin_global.h"
 #include "plugininterface/search-plugin-iface.h"
 #include "plugininterface/action-label.h"
-//#include "file-utils.h" //TODO
 #include "networkutil.h"
 #include "musicInfo.h"
 
@@ -72,14 +89,10 @@ private:
     QFrame *m_actionFrame = nullptr;
     QVBoxLayout *m_actionFrameLyt = nullptr;
     ActionLabel *m_actionLabel1 = nullptr;
-    ActionLabel *m_actionLabel2 = nullptr;
-    ActionLabel *m_actionLabel3 = nullptr;
-
-    QFrame *m_statusFrame = nullptr;
-    QHBoxLayout *m_statusFrameLyt = nullptr;
-    QLabel *m_statusLabel = nullptr;
-
     QVBoxLayout * m_actionLyt = nullptr;
+
+    QLabel *m_statusLabel = nullptr;
+    QLabel *m_copyrightLabel = nullptr;
 
 
     static size_t uniqueSymbol;
@@ -87,9 +100,11 @@ private:
 
     bool m_enable = true;
     QList<SearchPluginIface::Actioninfo> m_actionInfo;
-    NetworkUtil* m_networkUtil; //TODO: delete
+    NetworkUtil* m_networkUtil;
     QVector<MusicInfo> m_infos;
 };
 }
+
+Q_DECLARE_INTERFACE(Zeeker::MusicPlugin, MusicPlugin_iid)
 
 #endif // MUSICPLUGIN_H

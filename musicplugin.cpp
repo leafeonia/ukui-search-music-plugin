@@ -46,7 +46,7 @@ void MusicPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchRe
     ++MusicPlugin::uniqueSymbol;
     MusicPlugin::m_mutex.unlock();
 
-    m_networkUtil->getList(keyword, 4, searchResult, MusicPlugin::uniqueSymbol);
+    m_networkUtil->getList(keyword, 10, searchResult, MusicPlugin::uniqueSymbol);
 
 }
 
@@ -64,7 +64,6 @@ QWidget *MusicPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
     m_iconLabel->setPixmap(QPixmap(ri.description.at(2).value).scaled(180, 180));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
-    //m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));  // Q: glib
     m_nameLabel->setText(QString(showname));
     if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
@@ -97,13 +96,16 @@ void MusicPlugin::initDetailPage()
     m_detailLyt->setContentsMargins(8, 0, 16, 0);
     m_iconLabel = new QLabel(m_detailPage);
     m_iconLabel->setAlignment(Qt::AlignCenter);
-    m_iconLabel->setFixedHeight(200);
+    m_iconLabel->setFixedHeight(180);
 
     m_nameFrame = new QFrame(m_detailPage);
     m_nameFrameLyt = new QHBoxLayout(m_nameFrame);
     m_nameFrame->setLayout(m_nameFrameLyt);
     m_nameFrameLyt->setContentsMargins(8, 0, 0, 0);
     m_nameLabel = new QLabel(m_nameFrame);
+    QFont font = m_nameLabel->font();
+    font.setPointSize(14);
+    m_nameLabel->setFont(font);
     m_nameLabel->setMaximumWidth(280);
     m_pluginLabel = new QLabel(m_nameFrame);
     m_pluginLabel->setEnabled(false);
@@ -151,12 +153,20 @@ void MusicPlugin::initDetailPage()
     m_actionFrameLyt->addWidget(m_actionLabel1);
     m_actionFrame->setLayout(m_actionFrameLyt);
 
-    //m_statusFrame = new QFrame(m_detailPage);
-    //m_statusFrameLyt = new QHBoxLayout(m_statusFrame);
     m_statusLabel = new QLabel(m_detailPage);
     m_statusLabel->setWordWrap(true);
     m_statusLabel->setContentsMargins(8, 0, 8, 0);
-    //m_statusFrameLyt->addWidget(m_statusLabel);
+    m_statusLabel->setFixedHeight(60);
+
+    m_copyrightLabel = new QLabel(m_detailPage);
+    QFont font2 = m_copyrightLabel->font();
+    font2.setPointSize(8);
+    m_copyrightLabel->setFont(font2);
+    m_copyrightLabel->setWordWrap(true);
+    m_copyrightLabel->setContentsMargins(8, 0, 8, 0);
+    m_copyrightLabel->setEnabled(false);
+    m_copyrightLabel->setText(tr("Owner of copyright: Netease Cloud Music"));
+    m_copyrightLabel->setAlignment(Qt::AlignBottom);
 
     m_detailLyt->addSpacing(50);
     m_detailLyt->addWidget(m_iconLabel);
@@ -167,6 +177,7 @@ void MusicPlugin::initDetailPage()
     m_detailLyt->addWidget(m_line_2);
     m_detailLyt->addWidget(m_actionFrame);
     m_detailLyt->addWidget(m_statusLabel);
+    m_detailLyt->addWidget(m_copyrightLabel);
     m_detailPage->setLayout(m_detailLyt);
     m_detailLyt->addStretch();
 
@@ -175,6 +186,3 @@ void MusicPlugin::initDetailPage()
         m_networkUtil->downloadMusic(m_currentActionKey.toInt());
     });
 }
-
-// Q: copyRight?
-

@@ -37,12 +37,16 @@ unix:!macx: LIBS += -L$$PWD/../Desktop/uk2/build-ukui-search-Desktop-Debug/libse
 INCLUDEPATH += $$PWD/../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch
 DEPENDPATH += $$PWD/../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch
 
+#QMAKE_CXXFLAGS += -I/usr/include/chinese-seg -I/usr/include/ukui-search -I/usr/include/chinese-seg/cppjieba
+
+#LIBS += -lchinese-segmentation -lukui-search
 
 #TODO -libsearch
 
 # Q_DECLARE_INTERFACE(Zeeker::SearchPluginIface, SearchPluginIface_iid) //TODO
 
-# TODO: json peony-extension
-
 RESOURCES += \
     resources.qrc
+
+DISTFILES += \
+    common.json

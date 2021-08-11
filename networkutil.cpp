@@ -92,7 +92,7 @@ void NetworkUtil::imageFinish(size_t uniqueSymbol, int idx)
 
     QByteArray b = reply->readAll();
 
-    // judge file format by comparing magic number of file
+    // judge file format by magic number
     QString suffixString = QString(b.mid(1, 3));
     QString suffix = suffixString == "PNG" ? ".png" : ".jpg";
     QString imgPath = QDir::homePath() + "/.cache/ukui-search-musicPlugin/" + QString::number(m_infos[idx].id) + suffix;
