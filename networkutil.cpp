@@ -92,9 +92,9 @@ void NetworkUtil::imageFinish(size_t uniqueSymbol, int idx)
 
     QByteArray b = reply->readAll();
 
-    //int idx = m_imgUrlToIdx[reply->url()];
-
-    QString suffix = reply->url().toString().right(4);
+    // judge file format by comparing magic number of file
+    QString suffixString = QString(b.mid(1, 3));
+    QString suffix = suffixString == "PNG" ? ".png" : ".jpg";
     QString imgPath = QDir::homePath() + "/.cache/ukui-search-musicPlugin/" + QString::number(m_infos[idx].id) + suffix;
     QFile file(imgPath);
     file.open(QIODevice::WriteOnly);
