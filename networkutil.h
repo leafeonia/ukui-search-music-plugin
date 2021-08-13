@@ -15,9 +15,10 @@
 #include <QDir>
 #include <QMap>
 #include <QMessageBox>
+#include <QThread>
 
 #include "musicInfo.h"
-#include "plugininterface/search-plugin-iface.h"
+#include "ukui-search/search-plugin-iface.h"
 #include "musicplugin.h"
 
 namespace Zeeker{
@@ -43,7 +44,6 @@ private:
     QString m_name;
     int m_searchLimit;
     QVector<MusicInfo> m_infos;
-    //QMap<QUrl, int> m_imgUrlToIdx;
     DataQueue<SearchPluginIface::ResultInfo>* m_searchResult = nullptr; // Q: should not be filled by networkUtil? connect to musicPlugin instead?
 };
 }

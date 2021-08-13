@@ -9,6 +9,9 @@ NetworkUtil::NetworkUtil(QVector<MusicInfo>& infos, QObject *parent) : QObject(p
 
 void NetworkUtil::getList(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult, size_t uniqueSymbol)
 {
+    // avoid unnecessary network requests generated during the process of continuous typing
+    QThread::msleep(500);
+
     MusicPlugin::m_mutex.lock();
     if (uniqueSymbol != MusicPlugin::uniqueSymbol) {
         MusicPlugin::m_mutex.unlock();
@@ -138,7 +141,8 @@ void NetworkUtil::musicFinish(QNetworkReply* reply, QString name)
         return;
     }
     QByteArray b = reply->readAll();
-    QFile file(QDir::homePath() + "/Music/" + name + ".mp3");
+    QString suffix = QDir(QDir::homePath() + "/Music/").exists() ? "/Music/" : "/音乐/";
+    QFile file(QDir::homePath() + suffix + name + ".mp3");
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
     out << b;

@@ -3,7 +3,7 @@ QT += core xml widgets dbus concurrent network
 TEMPLATE = lib
 DEFINES += MUSICPLUGIN_LIBRARY
 
-CONFIG += c++11
+CONFIG += c++11 plugin
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -26,24 +26,23 @@ HEADERS += \
     musicplugin.h \
     networkutil.h
 
+TRANSLATIONS += \
+    ./translation/zh_CN.ts \
+
+qm_files.path = /usr/share/ukui-search-plugins/musicPlugin/translations/
+qm_files.files = $$OUT_PWD/translation/*.qm
+
+INSTALLS += qm_files
+
 # Default rules for deployment.
 unix {
-    target.path = /usr/lib
+    target.path = $$[QT_INSTALL_LIBS]/ukui-search-plugins/
 }
 !isEmpty(target.path): INSTALLS += target
 
-unix:!macx: LIBS += -L$$PWD/../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch/ -lukui-search
+QMAKE_CXXFLAGS += -I/usr/include/chinese-seg -I/usr/include/ukui-search -I/usr/include/chinese-seg/cppjieba
 
-INCLUDEPATH += $$PWD/../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch
-DEPENDPATH += $$PWD/../Desktop/uk2/build-ukui-search-Desktop-Debug/libsearch
-
-#QMAKE_CXXFLAGS += -I/usr/include/chinese-seg -I/usr/include/ukui-search -I/usr/include/chinese-seg/cppjieba
-
-#LIBS += -lchinese-segmentation -lukui-search
-
-#TODO -libsearch
-
-# Q_DECLARE_INTERFACE(Zeeker::SearchPluginIface, SearchPluginIface_iid) //TODO
+LIBS += -lchinese-segmentation -lukui-search
 
 RESOURCES += \
     resources.qrc

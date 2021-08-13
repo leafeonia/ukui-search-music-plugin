@@ -7,6 +7,14 @@ QMutex MusicPlugin::m_mutex;
 
 MusicPlugin::MusicPlugin(QObject *parent) : QObject(parent)
 {
+    QTranslator* translator = new QTranslator(this);
+    try {
+        if(!translator->load("/usr/share/ukui-search-plugins/musicPlugin/translations/" + QLocale::system().name())) throw - 1;
+        QApplication::installTranslator(translator);
+    } catch(...) {
+        qDebug() << "Load translations file" << QLocale() << "failed!";
+    }
+
     m_networkUtil = new NetworkUtil(m_infos);
     connect(m_networkUtil, &NetworkUtil::musicDownloadSuccess, this, &MusicPlugin::musicDownloadSuccess);
     connect(m_networkUtil, &NetworkUtil::musicDownloadFail, this, &MusicPlugin::musicDownloadFail);
@@ -68,7 +76,6 @@ QWidget *MusicPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
     if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     }
-    m_pluginLabel->setText(tr("Music"));
 
     m_artistsLabel2->setText(m_artistsLabel2->fontMetrics().elidedText(ri.description.at(0).value, Qt::ElideRight, m_artistsLabel2->width()));
     //m_artistsLabel2->setToolTip(m_currentActionKey);
@@ -79,12 +86,13 @@ QWidget *MusicPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
 
 void MusicPlugin::musicDownloadFail()
 {
-    m_statusLabel->setText("Download failed. The music may be protected by copyright.");
+    m_statusLabel->setText(tr("Download failed. The music may be protected by copyright."));
 }
 
 void MusicPlugin::musicDownloadSuccess()
 {
-    m_statusLabel->setText("Music successfully downloaded to " + QDir::homePath() + "/Music/");
+    QString suffix = QDir(QDir::homePath() + "/Music/").exists() ? "/Music/" : "/音乐/";
+    m_statusLabel->setText(tr("Music successfully downloaded to ") + QDir::homePath() + suffix);
 }
 
 void MusicPlugin::initDetailPage()
@@ -109,6 +117,7 @@ void MusicPlugin::initDetailPage()
     m_nameLabel->setMaximumWidth(280);
     m_pluginLabel = new QLabel(m_nameFrame);
     m_pluginLabel->setEnabled(false);
+    m_pluginLabel->setText(tr("Music"));
     m_nameFrameLyt->addWidget(m_nameLabel);
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
@@ -122,7 +131,7 @@ void MusicPlugin::initDetailPage()
     m_artistsFrameLyt = new QHBoxLayout(m_artistsFrame);
     m_artistsLabel1 = new QLabel(m_artistsFrame);
     m_artistsLabel2 = new QLabel(m_artistsFrame);
-    m_artistsLabel1->setText(tr("Artist"));
+    m_artistsLabel1->setText(tr("Artists"));
     m_artistsLabel2->setFixedWidth(240);
     m_artistsLabel2->setAlignment(Qt::AlignRight);
     m_artistsFrameLyt->addWidget(m_artistsLabel1);
@@ -182,7 +191,7 @@ void MusicPlugin::initDetailPage()
     m_detailLyt->addStretch();
 
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
-        m_statusLabel->setText("Downloading...");
+        m_statusLabel->setText(tr("Downloading..."));
         m_networkUtil->downloadMusic(m_currentActionKey.toInt());
     });
 }

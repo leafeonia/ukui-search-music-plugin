@@ -28,10 +28,12 @@
 #include <QLabel>
 #include <QAction>
 #include <QVector>
+#include <QTranslator>
+#include <QApplication>
 
 #include "musicPlugin_global.h"
-#include "plugininterface/search-plugin-iface.h"
-#include "plugininterface/action-label.h"
+#include "search-plugin-iface.h"
+#include "action-label.h"
 #include "networkutil.h"
 #include "musicInfo.h"
 
@@ -43,6 +45,8 @@ class MUSICPLUGIN_EXPORT MusicPlugin : public QObject, public SearchPluginIface
 {
     friend class NetworkUtil;
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID SearchPluginIface_iid FILE "common.json")
+    Q_INTERFACES(Zeeker::SearchPluginIface)
 public:
     MusicPlugin(QObject *parent = nullptr);
     ~MusicPlugin();
