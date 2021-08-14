@@ -15,7 +15,8 @@
 #include <QDir>
 #include <QMap>
 #include <QMessageBox>
-#include <QThread>
+#include <QThreadPool>
+#include <QRunnable>
 
 #include "musicInfo.h"
 #include "ukui-search/search-plugin-iface.h"
@@ -29,8 +30,9 @@ class NetworkUtil : public QObject
 public:
     explicit NetworkUtil(QVector<MusicInfo>& infos, QObject *parent = nullptr);
     void getList(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult, size_t uniqueSymbol);
+    void getList2(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult, size_t uniqueSymbol);
     void downloadMusic(int idx);
-    void musicFinish(QNetworkReply* reply, QString name); // use lambda as slot instead of Q_SLOT
+    void musicFinish(QNetworkReply* reply, QString name);
     void listFinish(size_t uniqueSymbol);
     void imageFinish(size_t uniqueSymbol, int idx);
 
@@ -45,7 +47,26 @@ private:
     int m_searchLimit;
     QVector<MusicInfo> m_infos;
     DataQueue<SearchPluginIface::ResultInfo>* m_searchResult = nullptr; // Q: should not be filled by networkUtil? connect to musicPlugin instead?
+    QThreadPool m_pool;
 };
+
+class Worker : public QObject, public QRunnable
+{
+    Q_OBJECT
+
+public:
+    Worker(){this->setAutoDelete(true);}
+
+public slots:
+    void run() override {
+        QThread::msleep(300);
+        emit ready();
+    }
+
+signals:
+    void ready();
+};
+
 }
 
 #endif // NETWORKUTIL_H

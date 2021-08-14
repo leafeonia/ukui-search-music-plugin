@@ -50,11 +50,11 @@ void MusicPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchRe
 
     if (keyword.trimmed().isEmpty()) return;
 
-    MusicPlugin::m_mutex.lock();
+    //MusicPlugin::m_mutex.lock();
     ++MusicPlugin::uniqueSymbol;
-    MusicPlugin::m_mutex.unlock();
+    //MusicPlugin::m_mutex.unlock();
 
-    m_networkUtil->getList(keyword, 10, searchResult, MusicPlugin::uniqueSymbol);
+    m_networkUtil->getList(keyword, 8, searchResult, MusicPlugin::uniqueSymbol);
 
 }
 

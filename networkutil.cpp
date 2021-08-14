@@ -5,19 +5,24 @@ using namespace Zeeker;
 NetworkUtil::NetworkUtil(QVector<MusicInfo>& infos, QObject *parent) : QObject(parent)
 {
     m_infos = infos;
+    m_pool.setMaxThreadCount(5);
 }
 
+// avoid unnecessary network requests generated during the process of continuous typing by adding time buffer
 void NetworkUtil::getList(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo>* searchResult, size_t uniqueSymbol)
 {
-    // avoid unnecessary network requests generated during the process of continuous typing
-    QThread::msleep(500);
+    Worker *worker = new Worker();
+    connect(worker, &Worker::ready, this, [=](){
+        getList2(name, searchLimit, searchResult, uniqueSymbol);
+    });
 
-    MusicPlugin::m_mutex.lock();
+    m_pool.start(worker);
+}
+
+void NetworkUtil::getList2(QString name, int searchLimit, DataQueue<SearchPluginIface::ResultInfo> *searchResult, size_t uniqueSymbol)
+{
     if (uniqueSymbol != MusicPlugin::uniqueSymbol) {
-        MusicPlugin::m_mutex.unlock();
         return;
-    } else {
-        MusicPlugin::m_mutex.unlock();
     }
 
     m_name = name;
@@ -28,7 +33,6 @@ void NetworkUtil::getList(QString name, int searchLimit, DataQueue<SearchPluginI
     connect(listReply, &QNetworkReply::finished, this, [=](){
         listFinish(uniqueSymbol);
     });
-
 }
 
 void NetworkUtil::listFinish(size_t uniqueSymbol)
@@ -57,14 +61,10 @@ void NetworkUtil::listFinish(size_t uniqueSymbol)
 
         info.album = songObject["album"].toObject()["name"].toString();
 
-        MusicPlugin::m_mutex.lock();
         if (uniqueSymbol != MusicPlugin::uniqueSymbol) {
-            MusicPlugin::m_mutex.unlock();
             reply->deleteLater();
-            return;
         } else {
             m_infos.push_back(info);
-            MusicPlugin::m_mutex.unlock();
         }
 
 
@@ -83,13 +83,9 @@ void NetworkUtil::imageFinish(size_t uniqueSymbol, int idx)
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
 
-    MusicPlugin::m_mutex.lock();
     if (uniqueSymbol != MusicPlugin::uniqueSymbol) {
-        MusicPlugin::m_mutex.unlock();
         reply->deleteLater();
         return;
-    } else {
-        MusicPlugin::m_mutex.unlock();
     }
 
 

@@ -1,0 +1,9 @@
+Package: musicplugin
+Version: 0.4.0+0813
+Architecture: amd64
+Maintainer: maoyiming <maoym99@outlook.com>
+Installed-Size: 265
+Depends: libc6 (>= 2.4), libgcc-s1 (>= 3.0), libqt5core5a (>= 5.12.2), libqt5gui5 (>= 5.7.0) | libqt5gui5-gles (>= 5.7.0), libqt5network5 (>= 5.0.2), libqt5widgets5 (>= 5.0.2), libstdc++6 (>= 4.1.1), libukui-search0 (= 0.4.0+0813)
+Section: utils
+Priority: optional
+Description: musicplugin is a plugin for ukui-search to implement online music search.
