@@ -17,7 +17,6 @@
 
 #ifndef MUSICPLUGIN_H
 #define MUSICPLUGIN_H
-#define MusicPlugin_iid "org.ukui.ukui-search." //Q
 
 #include <QObject>
 #include <QThreadPool>
@@ -98,9 +97,7 @@ private:
     QLabel *m_statusLabel = nullptr;
     QLabel *m_copyrightLabel = nullptr;
 
-
     static size_t uniqueSymbol;
-    static QMutex m_mutex;
 
     bool m_enable = true;
     QList<SearchPluginIface::Actioninfo> m_actionInfo;
@@ -108,7 +105,5 @@ private:
     QVector<MusicInfo> m_infos;
 };
 }
-
-Q_DECLARE_INTERFACE(Zeeker::MusicPlugin, MusicPlugin_iid)
 
 #endif // MUSICPLUGIN_H

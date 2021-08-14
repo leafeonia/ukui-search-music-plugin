@@ -43,7 +43,7 @@ void NetworkUtil::listFinish(size_t uniqueSymbol)
     QJsonDocument d = QJsonDocument::fromJson(val);
     QJsonArray songs = d.object()["result"].toObject()["songs"].toArray();
     int songCount = d.object()["result"].toObject()["songCount"].toInt();
-    for (int i = 0; i < std::min(m_searchLimit, songCount); i++) { //TODO: handle invalid data
+    for (int i = 0; i < std::min(m_searchLimit, songCount); i++) {
         MusicInfo info;
         QJsonObject songObject = songs[i].toObject();
 

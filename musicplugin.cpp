@@ -3,7 +3,6 @@
 using namespace Zeeker;
 
 size_t MusicPlugin::uniqueSymbol = 0;
-QMutex MusicPlugin::m_mutex;
 
 MusicPlugin::MusicPlugin(QObject *parent) : QObject(parent)
 {
@@ -27,7 +26,7 @@ MusicPlugin::MusicPlugin(QObject *parent) : QObject(parent)
     if (!dir.exists()) // create cache directory if not exists
     {
         QDir().mkpath(cachePath);
-    } else { // clear previous cache contents if directory exist
+    } else { // clear previous cache contents if directory exists
         dir.setNameFilters(QStringList() << "*.*");
         dir.setFilter(QDir::Files);
         foreach(QString dirFile, dir.entryList())
@@ -49,11 +48,7 @@ QString MusicPlugin::getPluginName() {
 void MusicPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult) {
 
     if (keyword.trimmed().isEmpty()) return;
-
-    //MusicPlugin::m_mutex.lock();
     ++MusicPlugin::uniqueSymbol;
-    //MusicPlugin::m_mutex.unlock();
-
     m_networkUtil->getList(keyword, 8, searchResult, MusicPlugin::uniqueSymbol);
 
 }
