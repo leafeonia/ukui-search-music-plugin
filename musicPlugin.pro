@@ -27,10 +27,10 @@ HEADERS += \
     networkutil.h
 
 TRANSLATIONS += \
-    ./translation/zh_CN.ts \
+    ./translation/zh_CN.ts
 
 qm_files.path = /usr/share/ukui-search-plugins/musicPlugin/translations/
-qm_files.files = $$OUT_PWD/translation/*.qm
+qm_files.files = $$OUT_PWD/.qm/*.qm
 
 INSTALLS += qm_files
 
